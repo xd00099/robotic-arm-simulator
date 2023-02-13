@@ -187,6 +187,21 @@ class Robot:
         self.x = x
         self.y = y
 
+        # calculate points
+        x_b = 320-150 * math.cos(angle1)
+        y_b = 320-150 * math.sin(angle1)
+        x_c = x_b - 100 * math.cos(angle1 + angle2)
+        y_c = y_b - 100 * math.sin(angle1 + angle2)
+        x_d = x_c - 50 * math.cos(angle1 + angle2 + angle3)
+        y_d = y_c - 50 * math.sin(angle1 + angle2 + angle3)
+
+        # calibration
+        B = (round(x_b - 320,3), round(320 - y_b,3))
+        C = (round(x_c - 320,3), round(320 - y_c,3))
+        D = (round(x_d - 320,3), round(320 - y_d,3))
+
+        return B, C, D, math.degrees(angle1), math.degrees(angle2), math.degrees(angle3)
+
 
     def move_in_trajectory(self, x, y):
         """Move the object in a smooth trajectory from its current position to (x, y).
@@ -198,20 +213,29 @@ class Robot:
             y (int): The y-coordinate of the target position.
         """
 
-        table = self.display.tree
+        table = self.display.table
+        table.delete(*table.get_children())
 
-        
         cur_x = self.x
         cur_y = self.y
+        prev_1, prev_2, prev_3 = math.degrees(self.angle1), math.degrees(self.angle2), math.degrees(self.angle3)
 
         dx = (x - cur_x) / 21
         dy = (y - cur_y) / 21
 
         def move_step(i):
-            nonlocal cur_x, cur_y
+            nonlocal table, cur_x, cur_y, prev_1, prev_2, prev_3
             cur_x += dx
             cur_y += dy
-            self.direct_move(cur_x, cur_y)
+            B, C, D, angle1, angle2, angle3 = self.direct_move(cur_x, cur_y)
+
+            d_1 = round(abs(angle1 - prev_1),3)
+            d_2 = round(abs(angle2 - prev_2),3)
+            d_3 = round(abs(angle3 - prev_3),3)
+            max_delta = max(d_1, d_2, d_3)
+            prev_1, prev_2, prev_3 = angle1, angle2, angle3
+            table.insert("", "end", text=f"{i}", values=(B, angle1, d_1, C, angle2, d_2, D, angle3, d_3, max_delta))
+
             if i < 21:
                 self.canvas.after(250, move_step, i + 1)
 
