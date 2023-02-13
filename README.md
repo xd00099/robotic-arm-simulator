@@ -17,16 +17,19 @@ To simply run the app on Windows, clone or download the repo and open `build/exe
 
 ## Sliders
 The feautre of sliders allows you to choose the angle of each robotic arm, and adjust freely to interact with the simulator.
+
 ![slider gif](assets/slider.gif)
 
 ## Click to Move
 Click anywhere inside of the reachable area to move the robotic arm to different places!
+
 ![click gif](assets/click.gif)
 
 ## Trajectory Mode & Statistics Table
 Click on the Trajectory Mode button to enable trajectory mode. In Trajectory mode, you can watch how the robotic arm moves from one point to the other.
 
 Once in trajectory mode, while the arm is moving, the positional data is recorded why the arm is moving. The trajectory is recorded including the positional change, angle changes, and the maximum angle change among all.
+
 ![traj gif](assets/traj.gif)
 
 
